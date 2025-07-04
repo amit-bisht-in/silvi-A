@@ -1,0 +1,52 @@
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import random
+
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('stopwords')
+
+# Define responses
+responses = {
+    "greeting": ["Hello! How can I assist you today?", "Hi! What's on your mind?", "Hey there! Ready to chat?"],
+    "goodbye": ["Goodbye! Come back soon!", "See you later!", "Bye bye!"],
+    "thanks": ["You're welcome!", "No problem!", "Happy to help!"],
+    "default": ["Interesting! Tell me more.", "Hmm, not sure about that one. What's next?", "Cool, what's up?"]
+}
+
+# Preprocess user input
+stop_words = set(stopwords.words('english'))
+
+def preprocess_input(user_input):
+    tokens = word_tokenize(user_input.lower())
+    tokens = [token for token in tokens if token not in stop_words and token.isalnum()]
+    return tokens
+
+# Match user input to response categories
+def get_response(user_input):
+    tokens = preprocess_input(user_input)
+    
+    # Simple rule-based matching
+    if any(word in tokens for word in ['hello', 'hi', 'hey']):
+        return random.choice(responses['greeting'])
+    elif any(word in tokens for word in ['bye', 'goodbye', 'exit']):
+        return random.choice(responses['goodbye'])
+    elif any(word in tokens for word in ['thank', 'thanks', 'thankyou']):
+        return random.choice(responses['thanks'])
+    else:
+        return random.choice(responses['default'])
+
+# Main chat loop
+def chat():
+    print("Chatbot: Hello! I'm your friendly AI chatbot. Type 'exit' to end the chat.")
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'exit':
+            print("Chatbot: " + random.choice(responses['goodbye']))
+            break
+        response = get_response(user_input)
+        print("Chatbot: " + response)
+
+if __name__ == "__main__":
+    chat()
